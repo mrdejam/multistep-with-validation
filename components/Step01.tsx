@@ -1,26 +1,23 @@
-/* eslint-disable @next/next/no-img-element */
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { Form } from '@unform/web';
-import { useRegisterData } from '../context/register';
+import { useFormData } from '../context';
 import Input from './Inputs/InputDefault';
 import * as Yup from 'yup';
 import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
+
 export const siteTitle = 'Step 1 | Enter Your Info';
 
-interface FormFilds {
-  hcode: number;
-  pcode: number;
-  mobile: number;
-  phone: number;
+interface FormFields {
+  name: String;
+  family: String;
+  nationalCode: number;
+  phoneNumber: number;
 }
 
-const numRegex = /^[A-Za-z]+$/;
-const phoneRegExp =
-  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 const schema = Yup.object().shape({
-  code_upper_head: Yup.string()
+  name: Yup.string()
     .required()
     .test(
       'len',
@@ -32,7 +29,7 @@ const schema = Yup.object().shape({
       'This Field CanNot Empty or Just Type Characters!',
       (val: any) => /^[A-z]+$/.test(val)
     ),
-  identification_code: Yup.string()
+  family: Yup.string()
     .required()
     .test(
       'len',
@@ -44,7 +41,7 @@ const schema = Yup.object().shape({
       'This Field CanNot Empty or Just Type Characters!',
       (val: any) => /^[A-z]+$/.test(val)
     ),
-  mobile: Yup.string()
+  nationalCode: Yup.string()
     .required()
     .test(
       'len',
@@ -56,63 +53,26 @@ const schema = Yup.object().shape({
       'This Field CanNot Empty or Just Type 10 Numbers!',
       (val: any) => /^[0-9]+$/.test(val)
     ),
-  phone_number: Yup.string()
+  phoneNumber: Yup.string()
     .notRequired()
     .test('len', 'Just Type 11 Numbers!', (val: any) => val.length === 11)
     .test('len', 'Just Type 11 Numbers!', (val: any) => /^[0-9]+$/.test(val)),
 });
 
-export default function Step1({ formStep, nextFormStep, prevFormStep }: any) {
+export default function Step1({ nextFormStep, prevFormStep }: any) {
   function preStepClick() {
     prevFormStep();
   }
-
-  var persianNumbers = [
-      /۰/g,
-      /۱/g,
-      /۲/g,
-      /۳/g,
-      /۴/g,
-      /۵/g,
-      /۶/g,
-      /۷/g,
-      /۸/g,
-      /۹/g,
-    ],
-    arabicNumbers = [
-      /٠/g,
-      /١/g,
-      /٢/g,
-      /٣/g,
-      /٤/g,
-      /٥/g,
-      /٦/g,
-      /٧/g,
-      /٨/g,
-      /٩/g,
-    ],
-    fixNumbers = function (str: any) {
-      if (typeof str === 'string') {
-        for (var i = 0; i < 10; i++) {
-          str = str.replace(persianNumbers[i], i).replace(arabicNumbers[i], i);
-        }
-      }
-      return str;
-    };
-
-  const { setFormValues }: any = useRegisterData();
-
+  const { data }: any = useFormData();
+  const { setFormValues }: any = useFormData();
   const formRef = useRef(null);
-  const hCode = useRef({});
 
-  const [upperLoading, setUpperLoading] = useState(false);
-  const [identiLoading, setidentiLoading] = useState(false);
-  const [mobileLoading, setmobileLoading] = useState(false);
-  const [upperCode, setUpperCode] = useState(0);
-  const [identiCode, setIdentiCode] = useState(0);
-  const [mobileCode, setMobileCode] = useState(0);
+  const [name, setName] = useState('');
+  const [family, setFamily] = useState('');
+  const [national, setNational] = useState();
+  const [phone, setPhone] = useState();
 
-  async function handleSubmit(data: any) {
+  async function handleSubmit(data: FormFields) {
     (formRef as any).current.setErrors({});
     try {
       await schema.validate(data, {
@@ -120,12 +80,11 @@ export default function Step1({ formStep, nextFormStep, prevFormStep }: any) {
       });
       nextFormStep();
       setFormValues({
-        code_upper_head: data.code_upper_head,
-        identification_code: data.identification_code,
-        mobile: data.mobile,
-        phone_number: data.phone_number,
+        name: data.name,
+        family: data.family,
+        nationalCode: data.nationalCode,
+        phoneNumber: data.phoneNumber,
       });
-      
     } catch (err) {
       const validationErrors: any = {};
       if (err instanceof Yup.ValidationError) {
@@ -137,6 +96,14 @@ export default function Step1({ formStep, nextFormStep, prevFormStep }: any) {
       }
     }
   }
+
+  useEffect(() => {
+    setName(data.name);
+    setFamily(data.family);
+    setNational(data.nationalCode);
+    setPhone(data.phoneNumber);
+  }, [data.family, data.name, data.nationalCode, data.phoneNumber]);
+
   return (
     <div>
       <Head>
@@ -183,14 +150,7 @@ export default function Step1({ formStep, nextFormStep, prevFormStep }: any) {
                   >
                     Name*
                   </label>
-                  <Input
-                    name="code_upper_head"
-                    type="code_upper_head"
-                    // value={setInputs}
-                    loading={upperLoading}
-                    checks={upperCode == 400}
-                    // onChange={setInputs}
-                  />
+                  <Input name="name" type="text" def={name} />
                 </div>
                 <div className="mb-3">
                   <label
@@ -199,12 +159,7 @@ export default function Step1({ formStep, nextFormStep, prevFormStep }: any) {
                   >
                     Family*
                   </label>
-                  <Input
-                    name="identification_code"
-                    type="identification_code"
-                    loading={identiLoading}
-                    checks={identiCode == 400}
-                  />
+                  <Input name="family" type="text" def={family} />
                 </div>
                 <div className="mb-3">
                   <label
@@ -213,12 +168,7 @@ export default function Step1({ formStep, nextFormStep, prevFormStep }: any) {
                   >
                     National Code*
                   </label>
-                  <Input
-                    name="mobile"
-                    type="text"
-                    loading={mobileLoading}
-                    checks={mobileCode == 400}
-                  />
+                  <Input name="nationalCode" type="text" def={national} />
                 </div>
                 <div className="mb-3">
                   <label
@@ -229,7 +179,7 @@ export default function Step1({ formStep, nextFormStep, prevFormStep }: any) {
                   </label>
 
                   <div className="relative mt-1 rounded-md">
-                    <Input name="phone_number" type="phone_number" />
+                    <Input name="phoneNumber" type="text" def={phone} />
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-3 sm:grid-cols-3">

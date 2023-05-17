@@ -2,7 +2,7 @@ import { useState, createContext, useContext } from 'react';
 
 export const FormContext = createContext({});
 
-export default function RegisterProvider({ children }: any) {
+export default function FormProvider({ children }: any) {
   const [data, setData] = useState({});
 
   const setFormValues = (values: any) => {
@@ -19,4 +19,4 @@ export default function RegisterProvider({ children }: any) {
   );
 }
 
-export const useRegisterData = () => useContext(FormContext);
+export const useFormData = () => useContext(FormContext);

@@ -3,10 +3,15 @@ import { useField } from '@unform/core';
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid';
 // import { Container, InputField, Error } from './styles';
 
-export default function Input({ name, checks, loading, type }: any) {
+export default function Input({ name, def, checks, loading, type }: any) {
   const inputRef = useRef(null);
 
-  const { fieldName, defaultValue = '', registerField, error } = useField(name);
+  const {
+    fieldName,
+    defaultValue = def,
+    registerField,
+    error,
+  } = useField(name);
   useEffect(() => {
     registerField({
       name: fieldName,

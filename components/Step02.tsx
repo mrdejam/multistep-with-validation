@@ -1,19 +1,18 @@
-/* eslint-disable @next/next/no-img-element */
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { Form } from '@unform/web';
-import { useRegisterData } from '../context/register';
+import { useFormData } from '../context';
 import Input from './Inputs/InputDefault';
 import * as Yup from 'yup';
-import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
+import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 export const siteTitle = 'Step 2 | Enter Your Login Data';
 
 interface FormFilds {
-  hcode: number;
-  pcode: number;
-  mobile: number;
-  phone: number;
+  email: String;
+  username: String;
+  password: String;
+  verifyPassword: String;
 }
 
 const nameRegex = /^[A-Za-z]+$/;
@@ -31,7 +30,7 @@ const schema = Yup.object().shape({
       'Your Password Is Weakly!'
     ),
   confirm_password: Yup.string().oneOf(
-    [Yup.ref('password'), null],
+    [Yup.ref('password')],
     'Password Does Not Match!'
   ),
   email: Yup.string()
@@ -39,68 +38,28 @@ const schema = Yup.object().shape({
     .min(8, 'The length of this field is at least 8 characters'),
 });
 
-export default function Step2({ formStep, nextFormStep, prevFormStep }: any) {
+export default function Step2({ nextFormStep, prevFormStep }: any) {
   function preStepClick() {
     prevFormStep();
   }
-
-  var persianNumbers = [
-      /۰/g,
-      /۱/g,
-      /۲/g,
-      /۳/g,
-      /۴/g,
-      /۵/g,
-      /۶/g,
-      /۷/g,
-      /۸/g,
-      /۹/g,
-    ],
-    arabicNumbers = [
-      /٠/g,
-      /١/g,
-      /٢/g,
-      /٣/g,
-      /٤/g,
-      /٥/g,
-      /٦/g,
-      /٧/g,
-      /٨/g,
-      /٩/g,
-    ],
-    fixNumbers = function (str: any) {
-      if (typeof str === 'string') {
-        for (var i = 0; i < 10; i++) {
-          str = str.replace(persianNumbers[i], i).replace(arabicNumbers[i], i);
-        }
-      }
-      return str;
-    };
-
-  const { setFormValues }: any = useRegisterData();
-
+  const { data }: any = useFormData();
+  const { setFormValues }: any = useFormData();
   const formRef = useRef(null);
-  const hCode = useRef({});
 
-  const [emailLoading, setEmailLoading] = useState(false);
-  const [emailCode, setEmailCode] = useState(null);
   const [email, setEmail] = useState('');
-  const [usernameLoading, setUsernameLoading] = useState(false);
-  const [usernameCode, setUsernameCode] = useState(null);
-  const [registerLoading, setRegisterLoading] = useState(false);
-  const [register, setRegister] = useState(0);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-  async function handleSubmit(data: any) {
+  async function handleSubmit(data: FormFilds) {
     (formRef as any).current.setErrors({});
     try {
       await schema.validate(data, {
         abortEarly: false,
       });
       setFormValues({
-        code_upper_head: data.code_upper_head,
-        identification_code: data.identification_code,
-        mobile: data.mobile,
-        phone_number: data.phone_number,
+        email: data.email,
+        username: data.username,
+        password: data.password,
       });
       nextFormStep();
     } catch (err) {
@@ -114,6 +73,12 @@ export default function Step2({ formStep, nextFormStep, prevFormStep }: any) {
       }
     }
   }
+  useEffect(() => {
+    setEmail(data.email);
+    setUsername(data.username);
+    setPassword(data.password);
+  }, [data.email, data.password, data.username]);
+
   return (
     <div>
       <Head>
@@ -160,7 +125,7 @@ export default function Step2({ formStep, nextFormStep, prevFormStep }: any) {
                   </label>
 
                   <div className="relative mt-1 rounded-md">
-                    <Input name="email" type="email" />
+                    <Input name="email" type="email" def={email} />
                   </div>
                 </div>
                 <div className="mb-3">
@@ -172,7 +137,7 @@ export default function Step2({ formStep, nextFormStep, prevFormStep }: any) {
                   </label>
 
                   <div className="relative mt-1 rounded-md">
-                    <Input name="username" type="text" />
+                    <Input name="username" type="text" def={username} />
                   </div>
                 </div>
                 <div className="mb-3">
@@ -184,7 +149,7 @@ export default function Step2({ formStep, nextFormStep, prevFormStep }: any) {
                   </label>
 
                   <div className="relative mt-1 rounded-md">
-                    <Input name="password" type="password" />
+                    <Input name="password" type="password" def={password} />
                   </div>
                 </div>
                 <div className="mb-3">
@@ -233,45 +198,13 @@ export default function Step2({ formStep, nextFormStep, prevFormStep }: any) {
                     type="submit"
                     className="group col-span-2 duration-200 mt-5 relative flex w-full justify-center rounded-md border border-transparent bg-green-600 py-2 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                   >
-                    <span className="absolute inset-y-0 right-0 flex items-center pr-3">
-                      {registerLoading == false && (
-                        <ChevronRightIcon
-                          className="h-5 w-5 text-green-500 group-hover:text-green-400"
-                          aria-hidden="true"
-                        />
-                      )}
-
-                      {registerLoading == true && (
-                        <svg
-                          className="inline animate-spin h-5 w-5 text-red"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                          ></circle>
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          ></path>
-                        </svg>
-                      )}
-                    </span>
-                    {registerLoading == true && (
-                      <span>Connecting to Server...</span>
-                    )}
-                    {registerLoading == false && <span>Submit</span>}
+                    <span className="absolute inset-y-0 right-0 flex items-center pr-3"></span>
+                    <span>Submit</span>
                   </button>
                 </div>
                 <div className="mt-6 text-center">
                   <span className="font-light text-small">
-                    تا آخرین مرحله ثبت نام هرگز مرورگر خود را رفرش ندهید.
+                    Dont Refresh Your Browser!
                   </span>
                 </div>
               </Form>

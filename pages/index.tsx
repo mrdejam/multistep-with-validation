@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Step1 from '../components/Step01';
 import Step2 from '../components/Step02';
+import Step3 from '../components/Step03';
 
 const social = [
   {
@@ -99,12 +100,19 @@ export default function Multistep() {
               <Step1 formStep={formStep} nextFormStep={nextFormStep} />
             )}
             {formStep == 1 && (
-          <Step2
-            formStep={formStep}
-            nextFormStep={nextFormStep}
-            prevFormStep={prevFormStep}
-          />
-        )}
+              <Step2
+                formStep={formStep}
+                nextFormStep={nextFormStep}
+                prevFormStep={prevFormStep}
+              />
+            )}
+            {formStep == 2 && (
+              <Step3
+                formStep={formStep}
+                nextFormStep={nextFormStep}
+                prevFormStep={prevFormStep}
+              />
+            )}
             <div className="mt-16 text-center">
               <div className="inline-flex space-x-6">
                 {social.map((item) => (
