@@ -208,7 +208,7 @@ export default function Step2({ formStep, nextFormStep, prevFormStep }: any) {
                   />
                   <label
                     htmlFor="remember-me"
-                    className="mr-2 block text-sm text-gray-900"
+                    className="ml-2 block text-sm text-gray-900"
                   >
                     <Link className="text-green-600" href="/terms">
                       Terms & Condisionts
@@ -217,6 +217,18 @@ export default function Step2({ formStep, nextFormStep, prevFormStep }: any) {
                   </label>
                 </div>
                 <div className="grid grid-cols-3 gap-3 sm:grid-cols-3">
+                  <button
+                    onClick={preStepClick}
+                    className="group duration-200 mt-5 relative flex w-full justify-center rounded-md border border-transparent bg-gray-600 py-2 px-4 text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                  >
+                    <span className="absolute inset-y-0 left-0 flex items-center pr-3">
+                      <ChevronLeftIcon
+                        className="h-5 w-5 text-gray-500 group-hover:text-gray-400"
+                        aria-hidden="true"
+                      />
+                    </span>
+                    Previous
+                  </button>
                   <button
                     type="submit"
                     className="group col-span-2 duration-200 mt-5 relative flex w-full justify-center rounded-md border border-transparent bg-green-600 py-2 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
@@ -252,22 +264,9 @@ export default function Step2({ formStep, nextFormStep, prevFormStep }: any) {
                       )}
                     </span>
                     {registerLoading == true && (
-                      <span>در حال ارتباط با سرور...</span>
+                      <span>Connecting to Server...</span>
                     )}
-                    {registerLoading == false && <span>تکمیل ثبت نام</span>}
-                    {register == 400 && <span>دوباره تلاش کنید!</span>}
-                  </button>
-                  <button
-                    onClick={preStepClick}
-                    className="group duration-200 mt-5 relative flex w-full justify-center rounded-md border border-transparent bg-gray-600 py-2 px-4 text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-                  >
-                    <span className="absolute inset-y-0 left-0 flex items-center pr-3">
-                      <ChevronLeftIcon
-                        className="h-5 w-5 text-gray-500 group-hover:text-gray-400"
-                        aria-hidden="true"
-                      />
-                    </span>
-                    مرحله قبل
+                    {registerLoading == false && <span>Submit</span>}
                   </button>
                 </div>
                 <div className="mt-6 text-center">
