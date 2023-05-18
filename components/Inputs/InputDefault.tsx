@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useField } from '@unform/core';
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid';
-// import { Container, InputField, Error } from './styles';
 
 export default function Input({ name, def, checks, loading, type }: any) {
   const inputRef = useRef(null);
