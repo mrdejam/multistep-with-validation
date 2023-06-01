@@ -1,7 +1,7 @@
 <p align="center">
   <a href="https://dejam.ir">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://assets.vercel.com/image/upload/v1662130559/nextjs/Icon_dark_background.png">
+      <source media="(prefers-color-scheme: dark)" srcset="/multistep.gif">
       <img src="/multistep.gif" height="1080">
     </picture>
     <h1 align="center">MultiStep-With-Validation</h1>
