@@ -2,7 +2,7 @@
   <a href="https://dejam.ir">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="./public/multistep.gif">
-      <img src="./public/multistep.gif" height="1080">
+      <img src="./public/multistep.gif" height="600">
     </picture>
     <h1 align="center">MultiStep-With-Validation</h1>
   </a>
